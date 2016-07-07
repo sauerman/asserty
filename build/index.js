@@ -36,13 +36,19 @@ var TYPES = {
 
     return true;
   },
-  string: function string(item) {
+  string: function string(item, settings) {
     if (item === null) {
       return 'value is null';
     } else if (item === undefined) {
       return 'value is undefined';
     } else if (typeof item !== 'string') {
       return 'value is not of type string';
+    }
+
+    if (settings.min && item.length < settings.min) {
+      return 'string is to short';
+    } else if (settings.max && item.length > settings.max) {
+      return 'string is to long';
     }
 
     return true;
@@ -69,6 +75,9 @@ function log() {
 
 function createInstance(id, spec) {
   function check(type, value) {
+    /**
+     * check if optional
+     */
     if (type.indexOf('?') !== -1) {
       if (value === null || value === undefined) {
         return true;
@@ -98,12 +107,33 @@ function createInstance(id, spec) {
       }
     }
 
-    if (TYPES[type]) {
-      return TYPES[type](value);
-    }
-
     if (spec.types[type]) {
       return checkObjectType(type, value);
+    }
+
+    /**
+     *
+     */
+    var t = type.split(' ');
+    var name = t.shift();
+    var settings = {};
+    t.forEach(function (item) {
+      if (item.indexOf('..') !== -1) {
+        var range = item.split('..');
+        if (range[0]) {
+          settings.min = range[0];
+        }
+        if (range[1]) {
+          settings.max = range[1];
+        }
+        return;
+      }
+
+      throw new Error('Option ' + item + ' in type ' + type + ' unknown');
+    });
+
+    if (TYPES[name]) {
+      return TYPES[name](value, settings);
     }
 
     throw new Error('Type ' + type + ' unknown');

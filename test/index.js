@@ -28,4 +28,7 @@ function test() {
 
 console.log('start');
 test();
+
+
+assert.assert(['hua..'], 'string 5..5')
 console.log('finish');
