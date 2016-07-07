@@ -1,0 +1,92 @@
+<html>
+<head></head>
+<body>
+  <div class="canvas">
+    <button id="button-click-test">Test</button>
+    <a href="#" id="anchor-click-test">Test</a>
+  </div>
+
+  <script src="../build/bundle.js"></script>
+  <script>
+    var Asserty = window.asserty.default;
+
+    var asserty = Asserty('browser', {
+      types: {
+        'Point': {
+          x: 'number',
+          y: 'number'
+        },
+
+        '*Point': {
+          x: 'number',
+          y: 'number'
+        },
+
+        'ButtonConstructor': {
+          name: '==="HTMLButtonElement"'
+        },
+
+        'Button': {
+          constructor: 'ButtonConstructor'
+        },
+
+        'ButtonClickEvent': {
+          target: 'Button'
+        }
+      }
+    });
+
+    console.log(asserty);
+
+    var assert = asserty.assert;
+    var validate = asserty.validate;
+
+    function addNumbers(a, b) {
+      validate(arguments, 'number', 'number');
+      return a + b;
+    }
+
+    function addPoints(a, b) {
+      validate(arguments, 'Point', '*Point');
+
+      return {
+        x: a.x + b.get('x'),
+        y: a.y + b.get('y')
+      };
+    }
+
+    function run() {
+      let point = {
+        x: 1,
+        y: 1,
+        get(field) {
+          return this[field];
+        }
+      }
+      console.log(addPoints({x: 1, y: 1}, point));
+      console.log(addNumbers(1, 2));
+    }
+
+    console.log('start...');
+    run();
+    console.log('...finished');
+
+    /**
+     * Event test
+     */
+    document
+    .getElementById("button-click-test")
+    .addEventListener('click', function(event) {
+      assert([event.target], 'Button');
+      console.log("doing");
+    });
+
+    document
+    .getElementById("anchor-click-test")
+    .addEventListener('click', function() {
+      assert(arguments, 'ButtonClickEvent');
+      console.log("doing 2");
+    });
+  </script>
+</body>
+</html>
