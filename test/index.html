@@ -8,8 +8,6 @@
 
   <script src="../build/bundle.js"></script>
   <script>
-    var Asserty = window.asserty.default;
-
     var asserty = Asserty('browser', {
       types: {
         'Point': {
@@ -66,7 +64,7 @@
       console.log(addPoints({x: 1, y: 1}, point));
       console.log(addNumbers(1, 2));
       
-      assert([[]], 'string|number|boolean');
+      validate([[]], 'string|number|boolean');
     }
 
     console.log('start...');

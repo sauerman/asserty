@@ -1,5 +1,4 @@
-var asserty = require('../build/bundle');
-console.log(asserty);
+var asserty = require('../build');
 var assert = asserty('test', {
   types: {
     Point: {

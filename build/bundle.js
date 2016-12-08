@@ -1,4 +1,4 @@
-var asserty =
+var Asserty =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -54,26 +54,7 @@ var asserty =
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	exports.default = function (id) {
-	  var spec = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { types: {} };
-	
-	  /* branch-transpiler start */instances[id];
-	
-	  if (instances[id] === undefined) {
-	    instances[id] = createInstance(id, spec);
-	  } else if (true) {
-	    instances[id] = Object.assign(instances[id].types, spec.types);
-	  }
-	  /* branch-transpiler end */
-	
-	  return instances[id];
-	};
 	
 	var _util = __webpack_require__(2);
 	
@@ -239,6 +220,21 @@ var asserty =
 	    assert: assert
 	  };
 	}
+	
+	module.exports = function (id) {
+	  var spec = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { types: {} };
+	
+	  /* branch-transpiler start */instances[id];
+	
+	  if (instances[id] === undefined) {
+	    instances[id] = createInstance(id, spec);
+	  } else if (true) {
+	    instances[id] = Object.assign(instances[id].types, spec.types);
+	  }
+	  /* branch-transpiler end */
+	
+	  return instances[id];
+	};
 
 /***/ },
 /* 2 */

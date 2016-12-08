@@ -9,7 +9,7 @@ module.exports = {
     path: './build/',
     filename: 'bundle.js',
 
-    library: ['asserty']
+    library: ['Asserty']
   },
 
   module: {

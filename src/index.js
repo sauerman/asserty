@@ -145,7 +145,7 @@ function createInstance(id, spec) {
   };
 }
 
-export default function(id, spec = {types:{}}) {
+module.exports = function(id, spec = {types:{}}) {
   instances[id] = branch
     (instances[id]) {
     (undefined    ): createInstance(id, spec)
@@ -153,4 +153,4 @@ export default function(id, spec = {types:{}}) {
   }
   
   return instances[id];
-}
+};
