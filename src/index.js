@@ -1,46 +1,44 @@
+import {log} from './util';
+import TYPES from './types';
+
 let instances = {};
-let TYPES = {
-  number(item) {
-    if (item === null) {
-      return 'value is null';
-    } else if (item === undefined) {
-      return 'value is undefined';
-    } else if (typeof item !== 'number') {
-      return 'value is not of type number';
-    }
-
-    return true;
-  },
-
-  string(item, settings) {
-    if (item === null) {
-      return 'value is null';
-    } else if (item === undefined) {
-      return 'value is undefined';
-    } else if (typeof item !== 'string') {
-      return 'value is not of type string';
-    }
-
-    if (settings.min && item.length < settings.min) {
-      return 'string is to short';
-    } else if (settings.max && item.length > settings.max) {
-      return 'string is to long';
-    }
-
-    return true;
-  }
-}
-
-function log(method = 'log', ...message) {
-  if (typeof console[method] === 'function') {
-    console[method](...message);
-  } else {
-    console.log(...message);
-  }
-}
 
 function createInstance(id, spec) {
   function check(type, value) {
+    /**
+     * check if multiple types allowed
+     */
+    let result;
+    result = branch 
+      (type.indexOf('|')) {
+      (-1               ): checkType(type, value)
+      (                 ): checkTypes(type.split('|'), value)
+    }
+    
+    return result;
+  }
+  
+  function checkTypes(types, value) {
+    let result = '';
+    
+    types.forEach((type, index) => {
+      if (result !== true) {
+        if (index > 0) {
+          result += ' and ';
+        }
+        let check = checkType(type, value);
+        
+        if (check === true) {
+          result = true
+        } else {
+          result += check;
+        }
+      }
+    });  
+    return result;
+  }
+  
+  function checkType(type, value) {
     /**
      * check if optional
      */
@@ -51,19 +49,19 @@ function createInstance(id, spec) {
         type = type.replace(/\?/g, '');
       }
     }
-
+ 
     /**
      * check for exact value
      */
     if (type.indexOf('===') === 0) {
-      if (type.indexOf('"') === 3 || type.indexOf('\'') === 3) {
+      if (type.indexOf('"') === 3 || type.indexOf('\'') === 3) { //is string
         type = type.substr(4, type.length - 5);
         if (value !== type) {
           return 'value is not ==="' + type + '" but ' + value;
         } else {
           return true;
         }
-      } else {
+      } else { //is number
         type = type.substr(3, type.length - 3);
         if (value !== parseInt(type, 10)) {
           return 'value is not ===' + type + ' but ' + value;
@@ -73,33 +71,12 @@ function createInstance(id, spec) {
       }
     }
 
-    if (spec.types[type]) {
-      return checkObjectType(type, value);
-    }
-
-    /**
-     *
-     */
-    let t = type.split(' ');
-    let name = t.shift();
-    let settings = {};
-    t.forEach(item => {
-      if (item.indexOf('..') !== -1) {
-        let range = item.split('..');
-        if (range[0]) {
-          settings.min = range[0];
-        }
-        if (range[1]) {
-          settings.max = range[1];
-        }
-        return;
-      }
-
-      throw new Error('Option ' + item + ' in type ' + type + ' unknown');
-    });
-
-    if (TYPES[name]) {
-      return TYPES[name](value, settings);
+    let typeName = type.trim();
+    
+    if (spec.types[typeName]) {
+      return checkObjectType(typeName, value);
+    } else if (TYPES[typeName]) {
+      return TYPES[typeName](value);
     }
 
     throw new Error('Type ' + type + ' unknown');
@@ -168,18 +145,12 @@ function createInstance(id, spec) {
   };
 }
 
-export default function(id, spec = {}) {
-  if (!spec.types) {
-    spec.types = {};
+export default function(id, spec = {types:{}}) {
+  instances[id] = branch
+    (instances[id]) {
+    (undefined    ): createInstance(id, spec)
+    (             ): Object.assign(instances[id].types, spec.types)
   }
-
-  let instance = instances[id];
-  if (instance) {
-    Object.assign(instance.types, spec.types);
-    return instance;
-  }
-  else {
-    instances[id] = createInstance(id, spec);
-    return instances[id];
-  }
+  
+  return instances[id];
 }

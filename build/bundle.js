@@ -50,7 +50,7 @@ var asserty =
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -58,77 +58,72 @@ var asserty =
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	exports.default = function (id) {
-	  var spec = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	  var spec = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { types: {} };
 	
-	  if (!spec.types) {
-	    spec.types = {};
-	  }
+	  /* branch-transpiler start */instances[id];
 	
-	  var instance = instances[id];
-	  if (instance) {
-	    Object.assign(instance.types, spec.types);
-	    return instance;
-	  } else {
+	  if (instances[id] === undefined) {
 	    instances[id] = createInstance(id, spec);
-	    return instances[id];
+	  } else if (true) {
+	    instances[id] = Object.assign(instances[id].types, spec.types);
 	  }
+	  /* branch-transpiler end */
+	
+	  return instances[id];
 	};
+	
+	var _util = __webpack_require__(2);
+	
+	var _types = __webpack_require__(3);
+	
+	var _types2 = _interopRequireDefault(_types);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var instances = {};
-	var TYPES = {
-	  number: function number(item) {
-	    if (item === null) {
-	      return 'value is null';
-	    } else if (item === undefined) {
-	      return 'value is undefined';
-	    } else if (typeof item !== 'number') {
-	      return 'value is not of type number';
-	    }
-	
-	    return true;
-	  },
-	  string: function string(item, settings) {
-	    if (item === null) {
-	      return 'value is null';
-	    } else if (item === undefined) {
-	      return 'value is undefined';
-	    } else if (typeof item !== 'string') {
-	      return 'value is not of type string';
-	    }
-	
-	    if (settings.min && item.length < settings.min) {
-	      return 'string is to short';
-	    } else if (settings.max && item.length > settings.max) {
-	      return 'string is to long';
-	    }
-	
-	    return true;
-	  }
-	};
-	
-	function log() {
-	  var method = arguments.length <= 0 || arguments[0] === undefined ? 'log' : arguments[0];
-	
-	  for (var _len = arguments.length, message = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	    message[_key - 1] = arguments[_key];
-	  }
-	
-	  if (typeof console[method] === 'function') {
-	    var _console;
-	
-	    (_console = console)[method].apply(_console, message);
-	  } else {
-	    var _console2;
-	
-	    (_console2 = console).log.apply(_console2, message);
-	  }
-	}
 	
 	function createInstance(id, spec) {
 	  function check(type, value) {
+	    /**
+	     * check if multiple types allowed
+	     */
+	    var result = void 0;
+	    /* branch-transpiler start */result;
+	
+	    if (type.indexOf('|') === -1) {
+	      result = checkType(type, value);
+	    } else if (true) {
+	      result = checkTypes(type.split('|'), value);
+	    }
+	    /* branch-transpiler end */
+	
+	    return result;
+	  }
+	
+	  function checkTypes(types, value) {
+	    var result = '';
+	
+	    types.forEach(function (type, index) {
+	      if (result !== true) {
+	        if (index > 0) {
+	          result += ' and ';
+	        }
+	        var _check = checkType(type, value);
+	
+	        if (_check === true) {
+	          result = true;
+	        } else {
+	          result += _check;
+	        }
+	      }
+	    });
+	    return result;
+	  }
+	
+	  function checkType(type, value) {
 	    /**
 	     * check if optional
 	     */
@@ -145,6 +140,7 @@ var asserty =
 	     */
 	    if (type.indexOf('===') === 0) {
 	      if (type.indexOf('"') === 3 || type.indexOf('\'') === 3) {
+	        //is string
 	        type = type.substr(4, type.length - 5);
 	        if (value !== type) {
 	          return 'value is not ==="' + type + '" but ' + value;
@@ -152,6 +148,7 @@ var asserty =
 	          return true;
 	        }
 	      } else {
+	        //is number
 	        type = type.substr(3, type.length - 3);
 	        if (value !== parseInt(type, 10)) {
 	          return 'value is not ===' + type + ' but ' + value;
@@ -161,33 +158,12 @@ var asserty =
 	      }
 	    }
 	
-	    if (spec.types[type]) {
-	      return checkObjectType(type, value);
-	    }
+	    var typeName = type.trim();
 	
-	    /**
-	     *
-	     */
-	    var t = type.split(' ');
-	    var name = t.shift();
-	    var settings = {};
-	    t.forEach(function (item) {
-	      if (item.indexOf('..') !== -1) {
-	        var range = item.split('..');
-	        if (range[0]) {
-	          settings.min = range[0];
-	        }
-	        if (range[1]) {
-	          settings.max = range[1];
-	        }
-	        return;
-	      }
-	
-	      throw new Error('Option ' + item + ' in type ' + type + ' unknown');
-	    });
-	
-	    if (TYPES[name]) {
-	      return TYPES[name](value, settings);
+	    if (spec.types[typeName]) {
+	      return checkObjectType(typeName, value);
+	    } else if (_types2.default[typeName]) {
+	      return _types2.default[typeName](value);
 	    }
 	
 	    throw new Error('Type ' + type + ' unknown');
@@ -226,14 +202,14 @@ var asserty =
 	  function validate(args) {
 	    var result = true;
 	
-	    for (var _len2 = arguments.length, types = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-	      types[_key2 - 1] = arguments[_key2];
+	    for (var _len = arguments.length, types = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	      types[_key - 1] = arguments[_key];
 	    }
 	
 	    types.find(function (type, index) {
 	      var result = check(type, args[index]);
 	      if (result !== true) {
-	        log('error', 'Argument', index, '(Value: ', args[index], ') is errorous. Message: ', result);
+	        (0, _util.log)('error', 'Argument', index, '(Value: ', args[index], ') is errorous. Message: ', result);
 	        result = false;
 	        return true;
 	      }
@@ -243,14 +219,14 @@ var asserty =
 	  }
 	
 	  function assert(args) {
-	    for (var _len3 = arguments.length, types = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-	      types[_key3 - 1] = arguments[_key3];
+	    for (var _len2 = arguments.length, types = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+	      types[_key2 - 1] = arguments[_key2];
 	    }
 	
 	    types.forEach(function (type, index) {
 	      var result = check(type, args[index]);
 	      if (result !== true) {
-	        log('error', 'Argument', index, '(Value: ', args[index], ') is errorous. Message: ', result);
+	        (0, _util.log)('error', 'Argument', index, '(Value: ', args[index], ') is errorous. Message: ', result);
 	        throw new Error('assertion failed...');
 	      }
 	    });
@@ -263,6 +239,78 @@ var asserty =
 	    assert: assert
 	  };
 	}
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.log = log;
+	function log() {
+	  var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'log';
+	
+	  for (var _len = arguments.length, message = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	    message[_key - 1] = arguments[_key];
+	  }
+	
+	  /* branch-transpiler start */
+	
+	  if (typeof console[method] === 'function') {
+	    var _console;
+	
+	    (_console = console)[method].apply(_console, message);
+	  } else if (true) {
+	    var _console2;
+	
+	    (_console2 = console).log.apply(_console2, message);
+	  }
+	  /* branch-transpiler end */
+	}
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	function isUndefined(item) {
+	  if (item === undefined) {
+	    return 'value is undefined';
+	  } else {
+	    return false;
+	  }
+	}
+	
+	function isNull(item) {
+	  if (item === null) {
+	    return 'value is null';
+	  } else {
+	    return false;
+	  }
+	}
+	
+	function isset(item) {
+	  return isUndefined(item) || isNull(item);
+	}
+	
+	exports.default = {
+	  number: function number(item) {
+	    return isset(item) || typeof item !== 'number' ? 'value is not of type number' : true;
+	  },
+	  string: function string(item) {
+	    return isset(item) || typeof item !== 'string' ? 'value is not of type string' : true;
+	  },
+	  boolean: function boolean(item) {
+	    return isset(item) || typeof item !== 'boolean' ? 'value is not of type boolean' : true;
+	  }
+	};
 
 /***/ }
 /******/ ]);

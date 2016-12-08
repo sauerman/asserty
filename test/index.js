@@ -1,4 +1,5 @@
-var asserty = require('../build').default;
+var asserty = require('../build/bundle');
+console.log(asserty);
 var assert = asserty('test', {
   types: {
     Point: {
@@ -19,7 +20,7 @@ function add(point) {
 }
 
 function test() {
-  add({x: 1, z: 3, fallback: {
+  add({x: 1, y: 2, fallback: {
     x: 2
   }});
 
@@ -30,5 +31,10 @@ console.log('start');
 test();
 
 
-assert.assert(['hua..'], 'string 5..5')
+assert.assert(['hua..'], 'string 5..5');
+
+assert.assert(['lol'], 'string|number');
+
+
+
 console.log('finish');
