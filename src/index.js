@@ -29,7 +29,7 @@ function createInstance(id, spec) {
         let check = checkType(type, value);
         
         if (check === true) {
-          result = true
+          result = true;
         } else {
           result += check;
         }
@@ -72,14 +72,16 @@ function createInstance(id, spec) {
     }
 
     let typeName = type.trim();
-    
+
     if (spec.types[typeName]) {
       return checkObjectType(typeName, value);
-    } else if (TYPES[typeName]) {
-      if (typeName === 'function') {
-        typeName = 'func';
-      }
-      
+    } 
+    
+    if (typeName === 'function') {
+      typeName = 'func';
+    }
+    
+    if (TYPES[typeName]) {
       return TYPES[typeName](value);
     }
 

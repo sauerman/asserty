@@ -89,11 +89,13 @@ function createInstance(id, spec) {
 
     if (spec.types[typeName]) {
       return checkObjectType(typeName, value);
-    } else if (_types2.default[typeName]) {
-      if (typeName === 'function') {
-        typeName = 'func';
-      }
+    }
 
+    if (typeName === 'function') {
+      typeName = 'func';
+    }
+
+    if (_types2.default[typeName]) {
       return _types2.default[typeName](value);
     }
 
