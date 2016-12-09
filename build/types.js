@@ -32,5 +32,8 @@ exports.default = {
   },
   boolean: function boolean(item) {
     return isset(item) || typeof item !== 'boolean' ? 'value is not of type boolean' : true;
+  },
+  func: function func(item) {
+    return isset(item) || typeof item !== 'function' ? 'value is not of type function' : true;
   }
 };

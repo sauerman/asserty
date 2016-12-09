@@ -90,6 +90,10 @@ function createInstance(id, spec) {
     if (spec.types[typeName]) {
       return checkObjectType(typeName, value);
     } else if (_types2.default[typeName]) {
+      if (typeName === 'function') {
+        typeName = 'func';
+      }
+
       return _types2.default[typeName](value);
     }
 
@@ -170,12 +174,12 @@ function createInstance(id, spec) {
 module.exports = function (id) {
   var spec = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { types: {} };
 
-  /* branch-transpiler start */instances[id];
+  /* branch-transpiler start */
 
   if (instances[id] === undefined) {
     instances[id] = createInstance(id, spec);
   } else if (true) {
-    instances[id] = Object.assign(instances[id].types, spec.types);
+    Object.assign(instances[id].types, spec.types);
   }
   /* branch-transpiler end */
 

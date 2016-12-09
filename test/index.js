@@ -9,6 +9,16 @@ var assert = asserty('test', {
 
     Test: {
       x: 'number'
+    },
+
+    spec: {
+      instanceId: 'string|number',
+      target: '==="browser"|==="node"'
+    },
+    
+    DOM: {
+      document: {},
+      container: 'string',
     }
   }
 });
@@ -29,11 +39,8 @@ function test() {
 console.log('start');
 test();
 
-
-assert.assert(['hua..'], 'string 5..5');
-
 assert.assert(['lol'], 'string|number');
+assert.assert([{instanceId: '1', target: 'browse'}], 'spec');
 
 
-
-console.log('finish');
+console.log('finish');  

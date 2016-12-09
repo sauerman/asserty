@@ -76,6 +76,10 @@ function createInstance(id, spec) {
     if (spec.types[typeName]) {
       return checkObjectType(typeName, value);
     } else if (TYPES[typeName]) {
+      if (typeName === 'function') {
+        typeName = 'func';
+      }
+      
       return TYPES[typeName](value);
     }
 
@@ -146,9 +150,9 @@ function createInstance(id, spec) {
 }
 
 module.exports = function(id, spec = {types:{}}) {
-  instances[id] = branch
+  branch
     (instances[id]) {
-    (undefined    ): createInstance(id, spec)
+    (undefined    ): instances[id] = createInstance(id, spec)
     (             ): Object.assign(instances[id].types, spec.types)
   }
   
