@@ -42,7 +42,7 @@ export default {
   
   array(item) {
     return isset(item) ||
-      typeof Array.isArray(item)
+      Array.isArray(item) === false
       ? 'value is not of type array'
       : true;
   },

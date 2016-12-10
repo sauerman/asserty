@@ -3,9 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 function isUndefined(item) {
   if (item === undefined) {
     return 'value is undefined';
@@ -37,7 +34,7 @@ exports.default = {
     return isset(item) || typeof item !== 'boolean' ? 'value is not of type boolean' : true;
   },
   array: function array(item) {
-    return isset(item) || _typeof(Array.isArray(item)) ? 'value is not of type array' : true;
+    return isset(item) || Array.isArray(item) === false ? 'value is not of type array' : true;
   },
   func: function func(item) {
     return isset(item) || typeof item !== 'function' ? 'value is not of type function' : true;
