@@ -40,6 +40,13 @@ export default {
       : true;
   },
   
+  array(item) {
+    return isset(item) ||
+      typeof Array.isArray(item)
+      ? 'value is not of type array'
+      : true;
+  },
+  
   func(item) {
     return isset(item) ||
       typeof item !== 'function'
